@@ -1,0 +1,1474 @@
+{
+	"info": {
+		"_postman_id": "31799193-ef7c-4299-855f-e65982584cc9",
+		"name": "petStore",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "46339259",
+		"_collection_link": "https://dyaa-5269682.postman.co/workspace/Dyaa's-Workspace~1b95d133-806e-4a15-8e76-15edbda1e47b/collection/46339259-31799193-ef7c-4299-855f-e65982584cc9?action=share&source=collection_link&creator=46339259"
+	},
+	"item": [
+		{
+			"name": "pet data",
+			"item": [
+				{
+					"name": "find pet by status",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();\r",
+									"\r",
+									"// Test for status code\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"\r",
+									"// Test for response structure\r",
+									"pm.test(\"Response is an array\", function () {\r",
+									"    pm.expect(response).to.be.an('array');\r",
+									"});\r",
+									"\r",
+									"// Check if response is not empty before looping\r",
+									"if (response && response.length > 0) {\r",
+									"    // Loop through each pet in the response\r",
+									"    response.forEach((pet) => {\r",
+									"        pm.test(\"Pet has valid structure\", function () {\r",
+									"            pm.expect(pet).to.have.all.keys('id', 'category', 'name', 'photoUrls', 'tags', 'status');\r",
+									"        });\r",
+									"\r",
+									"        pm.test(\"Pet ID is a valid number\", function () {\r",
+									"            pm.expect(pet.id).to.be.a('number');\r",
+									"        });\r",
+									"\r",
+									"        pm.test(\"Pet category has valid structure\", function () {\r",
+									"            pm.expect(pet.category).to.have.all.keys('id', 'name');\r",
+									"        });\r",
+									"\r",
+									"        pm.test(\"Pet name is a string\", function () {\r",
+									"            pm.expect(pet.name).to.be.a('string');\r",
+									"        });\r",
+									"\r",
+									"        pm.test(\"Pet tags is an array\", function () {\r",
+									"            pm.expect(pet.tags).to.be.an('array');\r",
+									"        });\r",
+									"\r",
+									"        pet.tags.forEach((tag) => {\r",
+									"            pm.test(\"Tag has valid structure\", function () {\r",
+									"                pm.expect(tag).to.have.all.keys('id', 'name');\r",
+									"            });\r",
+									"\r",
+									"            pm.test(\"Tag ID is a valid number\", function () {\r",
+									"                pm.expect(tag.id).to.be.a('number');\r",
+									"            });\r",
+									"\r",
+									"            pm.test(\"Tag name is a string\", function () {\r",
+									"                pm.expect(tag.name).to.be.a('string');\r",
+									"            });\r",
+									"        });\r",
+									"\r",
+									"        pm.test(\"Pet status is a string\", function () {\r",
+									"            pm.expect(pet.status).to.be.a('string');\r",
+									"        });\r",
+									"    });\r",
+									"}\r",
+									"\r",
+									"// Test for content type header\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+									"});\r",
+									"const globalStatus = pm.globals.get(\"status\");\r",
+									"\r",
+									"// Loop through each pet in the response to check status\r",
+									"if (response && response.length > 0) {\r",
+									"    response.forEach((pet) => {\r",
+									"        pm.test(\"Pet status matches global status\", function () {\r",
+									"            pm.expect(globalStatus).to.include(pet.status);\r",
+									"        });\r",
+									"    });\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/pet/{{status}}",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"pet",
+								"{{status}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add new pet",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Fixed variable redeclaration\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"\r",
+									"// Parse the JSON response\r",
+									"const responseData = pm.response.json();\r",
+									"\r",
+									"// Validate the response structure\r",
+									"pm.test(\"Response has valid structure\", function () {\r",
+									"    pm.expect(responseData).to.have.all.keys('id', 'category', 'name', 'photoUrls', 'tags', 'status');\r",
+									"});\r",
+									"\r",
+									"// Validate the id field\r",
+									"pm.test(\"ID is a number\", function () {\r",
+									"    pm.expect(responseData.id).to.be.a('number');\r",
+									"});\r",
+									"\r",
+									"// Validate the category structure\r",
+									"pm.test(\"Category has valid structure\", function () {\r",
+									"    pm.expect(responseData.category).to.have.all.keys('id', 'name');\r",
+									"    pm.expect(responseData.category.id).to.be.a('number');\r",
+									"    pm.expect(responseData.category.name).to.be.a('string');\r",
+									"});\r",
+									"\r",
+									"// Validate the name field\r",
+									"pm.test(\"Name is a string\", function () {\r",
+									"    pm.expect(responseData.name).to.be.a('string');\r",
+									"});\r",
+									"\r",
+									"// Validate the photoUrls field\r",
+									"pm.test(\"PhotoUrls is an array of strings\", function () {\r",
+									"    pm.expect(responseData.photoUrls).to.be.an('array');\r",
+									"    responseData.photoUrls.forEach(url => {\r",
+									"        pm.expect(url).to.be.a('string');\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"// Validate the tags structure\r",
+									"pm.test(\"Tags is an array of objects\", function () {\r",
+									"    pm.expect(responseData.tags).to.be.an('array');\r",
+									"    responseData.tags.forEach(tag => {\r",
+									"        pm.expect(tag).to.have.all.keys('id', 'name');\r",
+									"        pm.expect(tag.id).to.be.a('number');\r",
+									"        pm.expect(tag.name).to.be.a('string');\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"// Validate the status field\r",
+									"pm.test(\"Status is a string\", function () {\r",
+									"    pm.expect(responseData.status).to.be.a('string');\r",
+									"});\r",
+									"\r",
+									"// Validate that the id in the response matches the request\r",
+									"pm.test(\"ID in response matches the request\", function () {\r",
+									"    const requestId = 200; // Use the ID from the request\r",
+									"    pm.expect(responseData.id).to.equal(requestId);\r",
+									"});\r",
+									"\r",
+									"// Validate that the category id in the response matches the request\r",
+									"pm.test(\"Category ID in response matches the request\", function () {\r",
+									"    const requestCategoryId = 1; // Use the category ID from the request\r",
+									"    pm.expect(responseData.category.id).to.equal(requestCategoryId);\r",
+									"});\r",
+									"\r",
+									"// Validate that the category name in the response matches the request\r",
+									"pm.test(\"Category name in response matches the request\", function () {\r",
+									"    const requestCategoryName = \"fishs\"; // Use the category name from the request\r",
+									"    pm.expect(responseData.category.name).to.equal(requestCategoryName);\r",
+									"});\r",
+									"\r",
+									"// Validate that the name in the response matches the request\r",
+									"pm.test(\"Name in response matches the request\", function () {\r",
+									"    const requestName = \"max\"; // Use the name from the request\r",
+									"    pm.expect(responseData.name).to.equal(requestName);\r",
+									"});\r",
+									"\r",
+									"// Validate that the tags in the response matches the request\r",
+									"pm.test(\"Tags in response matches the request\", function () {\r",
+									"    const requestTags = [{ id: 1, name: \"cute\" }]; // Use the tags from the request\r",
+									"    pm.expect(responseData.tags).to.deep.equal(requestTags);\r",
+									"});\r",
+									"\r",
+									"// Validate that the status in the response matches the request\r",
+									"pm.test(\"Status in response matches the request\", function () {\r",
+									"    const requestStatus = \"available\"; // Use the status from the request\r",
+									"    pm.expect(responseData.status).to.equal(requestStatus);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 200,\r\n  \"category\": {\r\n    \"id\": 1,\r\n    \"name\": \"fishs\"\r\n  },\r\n  \"name\": \"max\",\r\n  \"photoUrls\": [\r\n    \"https://example.com/dog.jpg\"\r\n  ],\r\n  \"tags\": [\r\n    {\r\n      \"id\": 1,\r\n      \"name\": \"cute\"\r\n    }\r\n  ],\r\n  \"status\": \"available\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseURL}}/pet",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"pet"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "find pet",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/pet/{{Pet_id}}",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"pet",
+								"{{Pet_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update an existing pet",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the response status code is 200\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"// Validate the response structure\r",
+									"pm.test(\"Response has expected structure\", function () {\r",
+									"    pm.expect(response).to.have.all.keys('id', 'category', 'name', 'photoUrls', 'tags', 'status');\r",
+									"});\r",
+									"\r",
+									"// Validate 'id' field\r",
+									"pm.test(\"ID is a number\", function () {\r",
+									"    pm.expect(response.id).to.exist;\r",
+									"    pm.expect(response.id).to.be.a('number');\r",
+									"});\r",
+									"\r",
+									"// Validate 'category' structure and fields\r",
+									"pm.test(\"Category has expected structure\", function () {\r",
+									"    pm.expect(response.category).to.have.all.keys('id', 'name');\r",
+									"    pm.expect(response.category.id).to.exist;\r",
+									"    pm.expect(response.category.id).to.be.a('number');\r",
+									"    pm.expect(response.category.name).to.exist;\r",
+									"    pm.expect(response.category.name).to.be.a('string');\r",
+									"});\r",
+									"\r",
+									"// Validate 'name' field\r",
+									"pm.test(\"Name is a string\", function () {\r",
+									"    pm.expect(response.name).to.exist;\r",
+									"    pm.expect(response.name).to.be.a('string');\r",
+									"});\r",
+									"\r",
+									"// Validate 'photoUrls' field\r",
+									"pm.test(\"PhotoUrls is an array of strings\", function () {\r",
+									"    pm.expect(response.photoUrls).to.exist;\r",
+									"    pm.expect(response.photoUrls).to.be.an('array');\r",
+									"    response.photoUrls.forEach(url => {\r",
+									"        pm.expect(url).to.be.a('string');\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"// Validate 'tags' structure\r",
+									"pm.test(\"Tags is an array of objects\", function () {\r",
+									"    pm.expect(response.tags).to.exist;\r",
+									"    pm.expect(response.tags).to.be.an('array');\r",
+									"    response.tags.forEach(tag => {\r",
+									"        pm.expect(tag).to.have.all.keys('id', 'name');\r",
+									"        pm.expect(tag.id).to.exist;\r",
+									"        pm.expect(tag.id).to.be.a('number');\r",
+									"        pm.expect(tag.name).to.exist;\r",
+									"        pm.expect(tag.name).to.be.a('string');\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"// Validate 'status' field\r",
+									"pm.test(\"Status is a string\", function () {\r",
+									"    pm.expect(response.status).to.exist;\r",
+									"    pm.expect(response.status).to.be.a('string');\r",
+									"});\r",
+									"// Parse the request body\r",
+									"const requestBody = {\r",
+									"    \"id\": 100,\r",
+									"    \"category\": {\r",
+									"        \"id\": 1,\r",
+									"        \"name\": \"fishs\"\r",
+									"    },\r",
+									"    \"name\": \"wax\",\r",
+									"    \"photoUrls\": [\"https://example.com/dog.jpg\"],\r",
+									"    \"tags\": [{\"id\": 1, \"name\": \"cute\"}],\r",
+									"    \"status\": \"available\"\r",
+									"};\r",
+									"\r",
+									"// Verify equality between request and response data\r",
+									"pm.test(\"Response ID matches request ID\", function () {\r",
+									"    pm.expect(response.id).to.equal(requestBody.id);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response category matches request category\", function () {\r",
+									"    pm.expect(response.category.id).to.equal(requestBody.category.id);\r",
+									"    pm.expect(response.category.name).to.equal(requestBody.category.name);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response name matches request name\", function () {\r",
+									"    pm.expect(response.name).to.equal(requestBody.name);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response photoUrls match request photoUrls\", function () {\r",
+									"    pm.expect(response.photoUrls).to.deep.equal(requestBody.photoUrls);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response tags match request tags\", function () {\r",
+									"    pm.expect(response.tags).to.deep.equal(requestBody.tags);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response status matches request status\", function () {\r",
+									"    pm.expect(response.status).to.equal(requestBody.status);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 100,\r\n    \"category\": {\r\n        \"id\": 1,\r\n        \"name\": \"fishs\"\r\n    },\r\n    \"name\": \"wax\",\r\n    \"photoUrls\": [\r\n        \"https://example.com/dog.jpg\"\r\n    ],\r\n    \"tags\": [\r\n        {\r\n            \"id\": 1,\r\n            \"name\": \"cute\"\r\n        }\r\n    ],\r\n    \"status\": \"available\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseURL}}/pet",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"pet"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deletes a pet",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Fixed the response code check and JSON parsing\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"\r",
+									"// Validate the response structure and properties\r",
+									"const response = pm.response.text(); // Changed to text() since response is XML\r",
+									"pm.test(\"Response should have the correct structure\", function () {\r",
+									"    pm.expect(response).to.be.a('string'); // Check if response is a string\r",
+									"});\r",
+									"\r",
+									"// Since the response is XML, we can't validate code, type, and message properties\r",
+									"// Hence, these tests are removed\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/pet/{{Pet_id}}",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"pet",
+								"{{Pet_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "confirm deleting",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response body contains 'not found' message\", function () {\r",
+									"    const responseBody = pm.response.json();\r",
+									"    pm.expect(responseBody).to.have.property(\"message\");\r",
+									"    pm.expect(responseBody.message).to.equal(\"Pet not found\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/pet/{{Pet_id}}",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"pet",
+								"{{Pet_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "store",
+			"item": [
+				{
+					"name": "store inventory",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();\r",
+									"const expectedProperties = [\"На месте\", \"totvs\", \"sold\", \"pink\", \"string\", \"unsold\", \"pending\", \"available\", \"awake\", \"packing\", \"peric\", \"consequat \", \"status\"];\r",
+									"\r",
+									"// Test for status code\r",
+									"pm.test(\"Status code is 200\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Test for response time\r",
+									"pm.test(\"Response time is less than 2000ms\", () => {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+									"});\r",
+									"\r",
+									"// Test for response content type\r",
+									"pm.test(\"Content-Type is application/json\", () => {\r",
+									"    pm.expect(pm.response.headers.get('Content-Type')).to.include(\"application/json\");\r",
+									"});\r",
+									"\r",
+									"expectedProperties.forEach(prop => {\r",
+									"    pm.test(`Response body contains property '${prop}'`, () => {\r",
+									"        pm.expect(response).to.have.property(prop);\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"// Test for numerical values in response\r",
+									"const numericalProperties = expectedProperties; // Assuming all expected properties are numerical\r",
+									"numericalProperties.forEach(prop => {\r",
+									"    pm.test(`Response property '${prop}' is a number`, () => {\r",
+									"        pm.expect(response[prop]).to.be.a('number');\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"// New test case to check all values in the response to be numeric\r",
+									"Object.keys(response).forEach(key => {\r",
+									"    pm.test(`Response value for '${key}' is a number`, () => {\r",
+									"        pm.expect(response[key]).to.be.a('number');\r",
+									"    });\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BaseURL}}/store/inventory",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"store",
+								"inventory"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "place an order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();\r",
+									"\r",
+									"// Check status code\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"\r",
+									"// Validate response structure and properties\r",
+									"pm.test(\"Response has the correct structure\", function () {\r",
+									"    pm.expect(response).to.have.all.keys('id', 'petId', 'quantity', 'shipDate', 'status', 'complete');\r",
+									"});\r",
+									"\r",
+									"// Validate data types of the properties\r",
+									"pm.test(\"Response properties have correct data types\", function () {\r",
+									"    pm.expect(response.id).to.be.a('number');\r",
+									"    pm.expect(response.petId).to.be.a('number');\r",
+									"    pm.expect(response.quantity).to.be.a('number');\r",
+									"    pm.expect(response.shipDate).to.be.a('string');\r",
+									"    pm.expect(response.status).to.be.a('string');\r",
+									"    pm.expect(response.complete).to.be.a('boolean');\r",
+									"});\r",
+									"\r",
+									"// Validate specific values (not hardcoded)\r",
+									"\r",
+									"\r",
+									"\r",
+									"const requestBody = JSON.parse(pm.collectionVariables.get(\"requestBody\"));\r",
+									"// Validate that response values match the request values\r",
+									"pm.test(\"Response values match request values\", function () {\r",
+									"    pm.expect(response.id).to.equal(requestBody.id);\r",
+									"    pm.expect(response.petId).to.equal(requestBody.petId);\r",
+									"    pm.expect(response.quantity).to.equal(requestBody.quantity);\r",
+									"    pm.expect(response.status).to.equal(requestBody.status);\r",
+									"    pm.expect(response.complete).to.equal(requestBody.complete);\r",
+									"});\r",
+									"pm.collectionVariables.set(\"orderId\", requestBody.id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let rawBody = pm.request.body.raw;\r",
+									"\r",
+									"// Replace any {{variables}} with their actual values\r",
+									"let resolvedBody = pm.variables.replaceIn(rawBody);\r",
+									"\r",
+									"// Store it for later use in the Tests\r",
+									"pm.collectionVariables.set(\"requestBody\", resolvedBody);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 10,\r\n  \"petId\": {{Pet_id}},\r\n  \"quantity\": 100,\r\n  \"shipDate\": \"2025-08-12\",\r\n  \"status\": \"place\",\r\n  \"complete\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseURL}}/store/order",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"store",
+								"order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "find purchase by order id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();\r",
+									"const petIdFromResponse = parseInt(response.id); // store as string\r",
+									"const petIdFromCollection = parseInt(pm.collectionVariables.get(\"orderId\"), 10); // store as integer\r",
+									"console.log(\"Response Pet ID:\", response.petId, typeof response.petId);\r",
+									"pm.test(\"Pet ID in response equals pet ID in collection variables\", function () {\r",
+									"    pm.expect(petIdFromResponse).to.equal(petIdFromCollection);\r",
+									"});\r",
+									"console.log(\"Collection Pet ID:\", petIdFromCollection, typeof petIdFromCollection);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BaseURL}}/store/order/{{orderId}}",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"store",
+								"order",
+								"{{orderId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete an order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 400ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(400);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseURL}}/store/order/{{orderId}}",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"store",
+								"order",
+								"{{orderId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Login user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response should have a valid structure\", function () {\r",
+									"    pm.expect(response).to.have.all.keys('code', 'type', 'message');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response code should be 200\", function () {\r",
+									"    pm.expect(response.code).to.equal(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response type should be a string\", function () {\r",
+									"    pm.expect(response.type).to.be.a('string');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response message should be a string\", function () {\r",
+									"    pm.expect(response.message).to.be.a('string');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseURL}}/user/login?username=kkk&password=mmmmmmmmmmm'",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"user",
+								"login"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "kkk"
+								},
+								{
+									"key": "password",
+									"value": "mmmmmmmmmmm'"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the response status code is 200\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"\r",
+									"// Validate the response structure and properties\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response has code property\", function () {\r",
+									"    pm.expect(response).to.have.property('code');\r",
+									"    pm.expect(response.code).to.be.a('number');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has type property\", function () {\r",
+									"    pm.expect(response).to.have.property('type');\r",
+									"    pm.expect(response.type).to.be.a('string');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has message property\", function () {\r",
+									"    pm.expect(response).to.have.property('message');\r",
+									"    pm.expect(response.message).to.be.a('string');\r",
+									"});\r",
+									"\r",
+									"// Check the content-type of the response header\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");\r",
+									"});\r",
+									"\r",
+									"let body = JSON.parse(request.data);\r",
+									"pm.collectionVariables.set(\"Username\", body.username);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 1,\r\n  \"username\": \"kamalia\",\r\n  \"firstName\": \"dyaa\",\r\n  \"lastName\": \"mohamed\",\r\n  \"email\": \"dyaa@gmail.com\",\r\n  \"password\": \"mmmmmmmmmmm\",\r\n  \"phone\": \"01011223344\",\r\n  \"userStatus\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseURL}}/user",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "search by username",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the response status code is 200\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"// Validate the structure of the response\r",
+									"pm.test(\"Response structure is valid\", function () {\r",
+									"    pm.expect(response).to.have.all.keys('id', 'username', 'firstName', 'lastName', 'email', 'password', 'phone', 'userStatus');\r",
+									"});\r",
+									"\r",
+									"// Validate data types of response properties\r",
+									"pm.test(\"Response properties have correct data types\", function () {\r",
+									"    pm.expect(response.id).to.be.a('number');\r",
+									"    pm.expect(response.username).to.be.a('string');\r",
+									"    pm.expect(response.firstName).to.be.a('string');\r",
+									"    pm.expect(response.lastName).to.be.a('string');\r",
+									"    pm.expect(response.email).to.be.a('string');\r",
+									"    pm.expect(response.password).to.be.a('string');\r",
+									"    pm.expect(response.phone).to.be.a('string');\r",
+									"    pm.expect(response.userStatus).to.be.a('number');\r",
+									"});\r",
+									"\r",
+									"// Check Content-Type header\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");\r",
+									"});\r",
+									"// Verify if the username in the collection variable matches the username in the response body\r",
+									"pm.test(\"Username in collection variable matches response username\", function () {\r",
+									"    const response = pm.response.json();\r",
+									"    const collectionUsername = pm.collectionVariables.get(\"Username\");\r",
+									"    pm.expect(collectionUsername).to.equal(response.username);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/user/{{Username}}",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"user",
+								"{{Username}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update username",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Save the username to a collection variable for later use\r",
+									"const usernameToUpdate = pm.request.url.toString().split(\"/\").slice(-1)[0];\r",
+									"pm.collectionVariables.set(\"old_username\", usernameToUpdate);\r",
+									"\r",
+									"// Update old_username with the value of the username in the request body\r",
+									"const requestBody = JSON.parse(pm.request.body.raw);\r",
+									"// Retrieve the new username from collection variable\r",
+									"const newUsername = pm.collectionVariables.get(\"Username\");\r",
+									"\r",
+									"// Update old_username with the value of the new username\r",
+									"pm.collectionVariables.set(\"old_username\", newUsername);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check for successful response status code\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"\r",
+									"// Validate response structure\r",
+									"const response = pm.response.json();\r",
+									"pm.test(\"Response has expected properties\", function () {\r",
+									"    pm.expect(response).to.have.property('code');\r",
+									"    pm.expect(response).to.have.property('type');\r",
+									"    pm.expect(response).to.have.property('message');\r",
+									"});\r",
+									"\r",
+									"// Check the type of the 'code' property\r",
+									"pm.test(\"Code is a number\", function () {\r",
+									"    pm.expect(response.code).to.be.a('number');\r",
+									"});\r",
+									"\r",
+									"// Check that 'type' is a string\r",
+									"pm.test(\"Type is a string\", function () {\r",
+									"    pm.expect(response.type).to.be.a('string');\r",
+									"});\r",
+									"\r",
+									"// Check that 'message' is a string\r",
+									"pm.test(\"Message is a string\", function () {\r",
+									"    pm.expect(response.message).to.be.a('string');\r",
+									"});\r",
+									"let body = JSON.parse(request.data);\r",
+									"pm.collectionVariables.set(\"Username\", body.username);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 1,\r\n    \"username\": \"kam\",\r\n    \"firstName\": \"dyaa\",\r\n    \"lastName\": \"mohamed\",\r\n    \"email\": \"dyaa@gmail.com\",\r\n    \"password\": \"mmmmmmmmmmm\",\r\n    \"phone\": \"0\",\r\n    \"userStatus\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseURL}}/user/{{Username}}",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"user",
+								"{{Username}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "verify updated username exist",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/user/{{Username}}",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"user",
+								"{{Username}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "verify old username not exist",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has correct error structure\", function () {\r",
+									"    const response = pm.response.json();\r",
+									"    pm.expect(response).to.have.property(\"code\");\r",
+									"    pm.expect(response).to.have.property(\"type\");\r",
+									"    pm.expect(response).to.have.property(\"message\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Error message indicates user not found\", function () {\r",
+									"    const response = pm.response.json();\r",
+									"    pm.expect(response.message).to.equal(\"User not found\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/user/{{old_username}}",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"user",
+								"{{old_username}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create list of users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the response status code is 200\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"\r",
+									"// Validate the structure of the response body\r",
+									"const response = pm.response.json();\r",
+									"pm.test(\"Response has expected properties\", function () {\r",
+									"    pm.expect(response).to.have.all.keys('code', 'type', 'message');\r",
+									"});\r",
+									"\r",
+									"// Validate the data types of the response properties\r",
+									"pm.test(\"Response properties have correct data types\", function () {\r",
+									"    pm.expect(response.code).to.be.a('number');\r",
+									"    pm.expect(response.type).to.be.a('string');\r",
+									"    pm.expect(response.message).to.be.a('string');\r",
+									"});\r",
+									"\r",
+									"// Check if the content-type header is application/json\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\r\n  {\r\n    \"id\": 0,\r\n    \"username\": \"asmaa\",\r\n    \"firstName\": \"dyaa\",\r\n    \"lastName\": \"asmaa\",\r\n    \"email\": \"asma@gmail.com\",\r\n    \"password\": \"klkl\",\r\n    \"phone\": \"0123456789\",\r\n    \"userStatus\": 0\r\n  },\r\n  {\r\n    \"id\": 0,\r\n    \"username\": \"rabab\",\r\n    \"firstName\": \"dyaa\",\r\n    \"lastName\": \"rabab\",\r\n    \"email\": \"asma@gmail.com\",\r\n    \"password\": \"klkl\",\r\n    \"phone\": \"0123456789\",\r\n    \"userStatus\": 0\r\n  }\r\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseURL}}/user/createWithArray",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"user",
+								"createWithArray"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "search by username",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/user/asmaa",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"user",
+								"asmaa"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete username",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test for successful response status code\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"// Test for the presence of expected properties in the response body\r",
+									"pm.test(\"Response has expected properties\", function () {\r",
+									"    pm.expect(response).to.have.all.keys('code', 'type', 'message');\r",
+									"});\r",
+									"\r",
+									"// Test for the type of 'code' property\r",
+									"pm.test(\"Code is a number\", function () {\r",
+									"    pm.expect(response.code).to.be.a('number');\r",
+									"});\r",
+									"\r",
+									"// Test for the type of 'type' property\r",
+									"pm.test(\"Type is a string\", function () {\r",
+									"    pm.expect(response.type).to.be.a('string');\r",
+									"});\r",
+									"\r",
+									"// Test for the type of 'message' property\r",
+									"pm.test(\"Message is a string\", function () {\r",
+									"    pm.expect(response.message).to.be.a('string');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/user/rabab",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"user",
+								"rabab"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "verify username deleted",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(404);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response has error structure\", function () {\r",
+									"    pm.expect(response).to.have.property('code');\r",
+									"    pm.expect(response).to.have.property('type');\r",
+									"    pm.expect(response).to.have.property('message');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Error code is correct\", function () {\r",
+									"    pm.expect(response.code).to.equal(1);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Error type is 'error'\", function () {\r",
+									"    pm.expect(response.type).to.equal('error');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Error message is 'User not found'\", function () {\r",
+									"    pm.expect(response.message).to.equal('User not found');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/user/rabab",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"user",
+								"rabab"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "logout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the response status code is 200\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"// Validate the response structure\r",
+									"pm.test(\"Response structure is valid\", function () {\r",
+									"    pm.expect(response).to.have.property(\"code\");\r",
+									"    pm.expect(response).to.have.property(\"type\");\r",
+									"    pm.expect(response).to.have.property(\"message\");\r",
+									"});\r",
+									"\r",
+									"// Validate the type of each property\r",
+									"pm.test(\"Response properties have correct types\", function () {\r",
+									"    pm.expect(response.code).to.be.a('number');\r",
+									"    pm.expect(response.type).to.be.a('string');\r",
+									"    pm.expect(response.message).to.be.a('string');\r",
+									"});\r",
+									"\r",
+									"// Check the content type of the response headers\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/user/logout",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"user",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Confirm no user creation post logout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(401);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response structure is valid\", function () {\r",
+									"    const response = pm.response.json();\r",
+									"    pm.expect(response).to.have.property('code');\r",
+									"    pm.expect(response).to.have.property('type');\r",
+									"    pm.expect(response).to.have.property('message');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response code is 401\", function () {\r",
+									"    const response = pm.response.json();\r",
+									"    pm.expect(response.code).to.equal(401);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response type is 'unauthorized'\", function () {\r",
+									"    const response = pm.response.json();\r",
+									"    pm.expect(response.type).to.equal('unauthorized');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response message is a string\", function () {\r",
+									"    const response = pm.response.json();\r",
+									"    pm.expect(response.message).to.be.a('string');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 1,\r\n  \"username\": \"kamalia\",\r\n  \"firstName\": \"dyaa\",\r\n  \"lastName\": \"mohamed\",\r\n  \"email\": \"dyaa@gmail.com\",\r\n  \"password\": \"mmmmmmmmmmm\",\r\n  \"phone\": \"01011223344\",\r\n  \"userStatus\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseURL}}/user",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "Username",
+			"value": "kkk"
+		},
+		{
+			"key": "old_username",
+			"value": "{{Username}}"
+		},
+		{
+			"key": "requestBody",
+			"value": ""
+		}
+	]
+}
